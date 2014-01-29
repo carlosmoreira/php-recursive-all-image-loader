@@ -1,44 +1,25 @@
 <?php
-	//Get All Images
+	//Get All of file types
 	
-	function get_recursive_images($start_path){
+	function get_recursive_filetypes($start_path, $flags){
 		$dir_check = glob("$start_path");
+		if(sizeof($dir_check) < 1) return;
+		echo "<ul>";
 		foreach ($dir_check as $file) {
-			echo "<ul>";
-			//Check if its an image		
-			
+						
 			if(is_dir($file)){
-			
-				get_recursive_images("$file/*");
-				
+				get_recursive_filetypes("$file/*", $flags);
 			}else{
-				$ext = is_image($file);
-				if($ext =="jpg" || $ext == "JPG" || $ext == "PNG" || $ext == "png"){
+				$ext = new SplFileInfo($file);
+				$ext = $ext->getExtension();
+				if(in_array($ext, $flags)){
 					echo "<li><img style='width:10%;' src='$file'>";
 				}	
 			}
-			echo "</ul>";
 		}
-		return;	
-	}
-	function is_image($path)
-	{
-	    $a = getimagesize($path);
-	    $image_type = $a[2];
-	     
-	    if(in_array($image_type , array(IMAGETYPE_GIF , IMAGETYPE_JPEG ,IMAGETYPE_PNG , IMAGETYPE_BMP)))
-	    {
-	        return true;
-	    }
-	    return false;
+		echo "</ul>";
 	}
 	
-	
-	
-	get_recursive_images("*")
-	
-	
-	
-	
+	get_recursive_filetypes("*", array("jpg", "png"));
 	
 ?>
